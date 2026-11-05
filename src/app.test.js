@@ -9,7 +9,7 @@ describe("GET /", () => {
   it("returns a health check message", async () => {
     const res = await request(app).get("/");
     expect(res.status).toBe(200);
-    expect(res.body.message).toBe("Task API is running");
+    expect(res.body.message).toBe("Go Hokies!!!");
   });
 });
 
