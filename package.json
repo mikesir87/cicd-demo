@@ -1,0 +1,18 @@
+{
+  "name": "cicd-demo",
+  "version": "1.0.0",
+  "description": "A simple Express app for a CI/CD guest lecture demo",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest --coverage"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
+  }
+}
