@@ -64,3 +64,31 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-demo:${{ steps.timestamp.outputs.tag }}  
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update Kubernetes manifests
+        run: |
+          sed -i "s|cicd-demo:.*|cicd-demo:${{ needs.build-and-push.outputs.image-tag }}|g" k8s/deployment.yaml
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Set kubectl context
+        uses: azure/k8s-set-context@v4
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Deploy Access to Kubernetes
+        uses: azure/k8s-deploy@v5
+        with:
+          manifests: |
+            k8s/app.yaml
+          timeout: 30s

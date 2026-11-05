@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicd-demo
+  namespace: cicd-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cicd-demo
+  template:
+    metadata:
+      labels:
+        app: cicd-demo
+    spec:
+      containers:
+        - name: cicd-demo
+          image: mikesir87/cicd-demo:latest
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cicd-demo
+  namespace: cicd-demo
+spec:
+  selector:
+    app: cicd-demo
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cicd-demo
+  namespace: cicd-demo
+  annotations:
+    cert-manager.io/cluster-issuer: 'letsencrypt'
+    traefik.ingress.kubernetes.io/router.priority: '100'
+    traefik.ingress.kubernetes.io/redirect-to-https: 'true'
+spec:
+  tls:
+    - hosts:
+        - cicd-demo.cluster.mikesir87.training
+      secretName: cicd-demo-tls
+  rules:
+    - host: cicd-demo.cluster.mikesir87.training
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cicd-demo
+                port:
+                  number: 3000
