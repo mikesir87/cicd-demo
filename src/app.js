@@ -8,7 +8,7 @@ let tasks = [];
 let nextId = 1;
 
 app.get("/", (req, res) => {
-  res.json({ message: "Go Hokies!!! 🍁" });
+  res.json({ message: "🦗🦗🦗🦗" });
 });
 
 app.get("/tasks", (req, res) => {
